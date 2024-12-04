@@ -3,6 +3,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Test for the LabelledTransitionSystemTest class.
  */
@@ -30,5 +32,6 @@ class LabelledTransitionSystemTest {
     public void createLTSTest() {
         LabelledTransitionSystem labelledTransitionSystem = new LabelledTransitionSystem(testList);
         labelledTransitionSystem.print();
+        assertEquals(labelledTransitionSystem.getStateCount(), labelledTransitionSystem.getStates().size());
     }
 }
