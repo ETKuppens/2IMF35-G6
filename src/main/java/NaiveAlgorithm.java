@@ -4,10 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * The Naive algorithm for checking mu-calculus formulas against labelled transition systems,
+ * as described by the pseudo-code of page 11/32 from the slides of lecture 4.
  */
 public class NaiveAlgorithm {
 
+    /**
+     * Get all states in M where f holds.
+     * @param f The mu-calculus formula against which the LTS is checked.
+     * @param M The LTS to be checked.
+     * @return An array holding all states in M.States for which mu-calculus formula f holds.
+     */
     public static ArrayList<String> eval(MuCalculusFormula f, LabelledTransitionSystem M) {
         return eval(f, new AList(f), M);
     }
@@ -210,6 +217,10 @@ public class NaiveAlgorithm {
         return null;
     }
 
+    /**
+     * Class holding the intermediate values for calculating the fixed points,
+     * with extended functionality allowing indexing by recursion variable name.
+     */
     private static class AList extends ArrayList<ArrayList<String>> {
 
         /**
