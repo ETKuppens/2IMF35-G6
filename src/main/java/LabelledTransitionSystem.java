@@ -1,13 +1,9 @@
 import java.util.ArrayList;
 
-/**
- * TODO: Implement LabelledTransitionSystem!
- * -> implement the operations on an LTS
- * -> implement a parser from Aldebran either in a separate class or in the constructor
- */
 public class LabelledTransitionSystem {
     private final ArrayList<Edge> Edges = new ArrayList<>();
     private final ArrayList<String> States = new ArrayList<>();
+    private final ArrayList<String> Actions = new ArrayList<>();
     private Integer StartNode;
     private Integer EdgeCount;
     private Integer StateCount;
@@ -60,19 +56,22 @@ public class LabelledTransitionSystem {
                 String endState = lts.substring(lts.lastIndexOf(',') + 1);
                 String label = lts.substring(lts.indexOf('"') + 1, lts.lastIndexOf('"'));
 
-                addStates(startState, endState);
+                addStates(startState, endState, label);
 
                 Edges.add(new Edge(startState, label, endState));
             }
         }
     }
 
-    private void addStates(String startState, String endState) {
+    private void addStates(String startState, String endState, String label) {
         if (!States.contains(startState)) {
             States.add(startState);
         }
         if (!States.contains(endState)) {
             States.add(endState);
+        }
+        if (!Actions.contains(label)) {
+            Actions.add(label);
         }
     }
 
@@ -85,6 +84,9 @@ public class LabelledTransitionSystem {
         }
         for (String state:States) {
             System.out.println(state);
+        }
+        for (String action:Actions) {
+            System.out.println(action);
         }
     }
 }
