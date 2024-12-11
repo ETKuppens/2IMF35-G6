@@ -1,10 +1,7 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
-    Map<String, ArrayList<String>> variableArrayMap = new HashMap<>();
+    Map<String, ArrayList<String>> variableArrayMap = new LinkedHashMap<>();
 
 
     private void findVariables(MuCalculusFormula formula, LabelledTransitionSystem M) {
@@ -43,19 +40,36 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
         return formulas;
     }
 
-    private ArrayList<String> findFreeVariables() {
-        return null;
+    private ArrayList<String> findFreeVariables(MuCalculusFormula formula, Integer index, ArrayList<String> freeVars) {
+        if (formula.f != null) {
+            freeVars = findFreeVariables(formula.f, index, freeVars);
+        }
+        if (formula.g != null) {
+            freeVars = findFreeVariables(formula.g, index, freeVars);
+        }
+
+        List<String> keys = new ArrayList<>(variableArrayMap.keySet());
+
+        if (formula.type == MuCalculusFormula.MuCalculusFormulaType.RECURSION_VARIABLE && keys.indexOf(formula.variableName) < index) {
+            freeVars.add(formula.variableName);
+        }
+
+        return freeVars;
     }
 
-    private ArrayList<String> resetOpenSubFormulas(MuCalculusFormula initialFormula, MuCalculusFormula subsequentFormula, ArrayList<String> openFormulas) {
+    private ArrayList<String> resetOpenSubFormulas(MuCalculusFormula initialFormula, ArrayList<String> openFormulas) {
         ArrayList<MuCalculusFormula> formulas = findNestedFixPoints(initialFormula, new ArrayList<>());
+
+        List<String> keys = new ArrayList<>(variableArrayMap.keySet());
 
         for (MuCalculusFormula formula : formulas) {
             if (formula.type == MuCalculusFormula.MuCalculusFormulaType.MU) {
-                Boolean isOpen = false;
+                Integer index = keys.indexOf(formula.variableName);
 
-                if (isOpen) {
-                    System.out.println('b');
+                ArrayList<String> freeVars = findFreeVariables(formula, index, new ArrayList<>());
+
+                if (!freeVars.isEmpty()) {
+                    variableArrayMap.put(formula.variableName, new ArrayList<>());
                 }
             }
         }
@@ -199,7 +213,7 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
                 ArrayList<String> Ai = variableArrayMap.get(f.variableName);
                 // A[i] := \emptyset
                 if (binder == MuCalculusFormula.MuCalculusFormulaType.NU) {
-                    resetOpenSubFormulas(f, f, new ArrayList<>());
+                    resetOpenSubFormulas(f, new ArrayList<>());
                 }
                 ArrayList<String> oldAi;
 
