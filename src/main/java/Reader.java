@@ -1,7 +1,8 @@
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;  // Import the Scanner class
-import java.io.File;
-import java.io.FileNotFoundException;
+
 
 class Reader {
   public static void main(String[] args) {
@@ -27,7 +28,36 @@ class Reader {
       System.out.println("An error occurred.");
       e.printStackTrace();
     }
+    List<String> lines = new ArrayList<>();
+
+    MuCalculusFormula muCalculusFormula;
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(argumentsCommand[1]))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        lines.add(line);
+      }
+    } catch (IOException e) {
+      System.err.println("Error reading file: " + e.getMessage());
+    }
+
+    for (String line : lines) {
+      if (!line.contains("%") && !line.equals("")) {
+        muCalculusFormula = new MuCalculusFormula(MuCalculusInputCleaner.cleanInput(line));
+      }
+    }
+
     LabelledTransitionSystem labelledTransitionSystem = new LabelledTransitionSystem(LTSlist);
+
+    if (argumentsCommand[2].equals("naive")) {
+      System.out.println("Using naive algorithm");
+
+    } else if (argumentsCommand[2].equals("EL")) {
+      System.out.println("Using Emerson Lei algorithm");
+
+    } else {
+      System.out.println("Please select either 'naive' or 'EL' as setting");
+    }
   }
 }
 
