@@ -85,10 +85,13 @@ public class EmersonLeiAlgorithmTest extends ModelCheckingAlgorithmTest {
 
         System.out.println("womp");
 
-        System.out.println(DepthFinder.findNestingDepth(new MuCalculusFormula("(muAnuB(A||B)&&muCmuD(C||muE(E||E)))"), 0));
+        System.out.println(DepthFinder.findNestingDepth(new MuCalculusFormula("(muAnuB(A||B)&&muCmuD(C||muE(E||E)))")));
 
-        System.out.println(DepthFinder.findAlternationDepth(new MuCalculusFormula("(muAnuB(A||B)&&muCmuD(C||muE(E||E)))"), 0, null));
-        System.out.println(DepthFinder.findAlternationDepth(new MuCalculusFormula("(muAnuB(A||B)&&muCnuD(C||muE(E||E)))"), 0, null));
+        System.out.println(DepthFinder.findAlternationDepth(new MuCalculusFormula("(muAnuB(A||B)&&muCmuD(C||muE(E||E)))")));
+        System.out.println(DepthFinder.findAlternationDepth(new MuCalculusFormula("(muAnuB(A||B)&&muCnuD(C||muE(E||E)))")));
+//
+//        System.out.println(DepthFinder.findDAD(new MuCalculusFormula("(muAnuB(A||B)&&muCmuD(C||muE(E||E)))")));
+//        System.out.println(DepthFinder.findDAD(new MuCalculusFormula("(muAnuB(A||B)&&muCnuD(C||muE(E||E)))")));
 
 //        EmersonLeiAlgorithm emersonLeiAlgorithm = new EmersonLeiAlgorithm();
 //

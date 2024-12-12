@@ -51,8 +51,8 @@ class Reader {
     
     ArrayList<String> eval = new ArrayList<>();
 
-    Integer nestingDepth = DepthFinder.findNestingDepth(muCalculusFormula, 0);
-    Integer alternationDepth = DepthFinder.findAlternationDepth(muCalculusFormula, 0, null);
+    Integer nestingDepth = DepthFinder.findNestingDepth(muCalculusFormula);
+    Integer alternationDepth = DepthFinder.findAlternationDepth(muCalculusFormula);
 
     System.out.println("Nesting depth = " + nestingDepth.toString());
     System.out.println("Alternation depth = " + alternationDepth.toString());
