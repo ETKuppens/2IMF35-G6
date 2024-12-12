@@ -30,7 +30,7 @@ class Reader {
     }
     List<String> lines = new ArrayList<>();
 
-    MuCalculusFormula muCalculusFormula;
+    MuCalculusFormula muCalculusFormula = null;
 
     try (BufferedReader reader = new BufferedReader(new FileReader(argumentsCommand[1]))) {
       String line;
@@ -48,12 +48,20 @@ class Reader {
     }
 
     LabelledTransitionSystem labelledTransitionSystem = new LabelledTransitionSystem(LTSlist);
+    
+    ArrayList<String> eval = new ArrayList<>();
 
     if (argumentsCommand[2].equals("naive")) {
       System.out.println("Using naive algorithm");
+      NaiveAlgorithm naiveAlgorithm = new NaiveAlgorithm();
+      
+      eval = naiveAlgorithm.eval(muCalculusFormula, labelledTransitionSystem);
 
     } else if (argumentsCommand[2].equals("EL")) {
       System.out.println("Using Emerson Lei algorithm");
+      EmersonLeiAlgorithm emersonLeiAlgorithm = new EmersonLeiAlgorithm();
+
+      eval = emersonLeiAlgorithm.eval(muCalculusFormula, labelledTransitionSystem);
 
     } else {
       System.out.println("Please select either 'naive' or 'EL' as setting");
