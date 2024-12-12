@@ -51,6 +51,12 @@ class Reader {
     
     ArrayList<String> eval = new ArrayList<>();
 
+    Integer nestingDepth = DepthFinder.findNestingDepth(muCalculusFormula, 0);
+    Integer alternationDepth = DepthFinder.findAlternationDepth(muCalculusFormula, 0, null);
+
+    System.out.println("Nesting depth = " + nestingDepth.toString());
+    System.out.println("Alternation depth = " + alternationDepth.toString());
+
     if (argumentsCommand[2].equals("naive")) {
       System.out.println("Using naive algorithm");
       NaiveAlgorithm naiveAlgorithm = new NaiveAlgorithm();
@@ -62,6 +68,7 @@ class Reader {
       EmersonLeiAlgorithm emersonLeiAlgorithm = new EmersonLeiAlgorithm();
 
       eval = emersonLeiAlgorithm.eval(muCalculusFormula, labelledTransitionSystem);
+
 
     } else {
       System.out.println("Please select either 'naive' or 'EL' as setting");
