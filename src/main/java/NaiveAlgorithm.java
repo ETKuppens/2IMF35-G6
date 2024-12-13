@@ -8,7 +8,7 @@ import java.util.Map;
  * as described by the pseudo-code of page 11/32 from the slides of lecture 4.
  */
 public class NaiveAlgorithm implements ModelCheckingAlgorithm {
-
+    int counter = 0;
     /**
      * Get all states in M where f holds.
      * @param f The mu-calculus formula against which the LTS is checked.
@@ -17,7 +17,10 @@ public class NaiveAlgorithm implements ModelCheckingAlgorithm {
      */
     @Override
     public ArrayList<String> eval(MuCalculusFormula f, LabelledTransitionSystem M) {
-        return eval(f, new AList(f), M);
+        counter = 0;
+        ArrayList<String> val = eval(f, new AList(f), M);
+        System.out.println("Naive iteration: " + counter);
+        return val;
     }
 
     private ArrayList<String> eval(MuCalculusFormula f, AList A, LabelledTransitionSystem M) {
@@ -174,6 +177,7 @@ public class NaiveAlgorithm implements ModelCheckingAlgorithm {
                 ArrayList<String> oldAi;
 
                 do {
+                    counter++;
                     // X' := A[i]
                     oldAi = new ArrayList<>(Ai);
 
@@ -201,6 +205,7 @@ public class NaiveAlgorithm implements ModelCheckingAlgorithm {
                 Ai.addAll(M.getStates());
 
                 do {
+                    counter++;
                     // X' := A[i]
                     oldAi = new ArrayList<>(Ai);
 

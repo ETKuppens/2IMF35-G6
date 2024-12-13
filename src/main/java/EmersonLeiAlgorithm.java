@@ -2,7 +2,7 @@ import java.util.*;
 
 public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
     Map<String, ArrayList<String>> variableArrayMap = new LinkedHashMap<>();
-
+    int counter = 0;
 
     private void findVariables(MuCalculusFormula formula, LabelledTransitionSystem M) {
         if (formula.type == MuCalculusFormula.MuCalculusFormulaType.MU) {
@@ -57,13 +57,13 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
         return freeVars;
     }
 
-    private ArrayList<String> resetOpenSubFormulas(MuCalculusFormula initialFormula, ArrayList<String> openFormulas) {
+    private ArrayList<String> resetOpenSubFormulas(MuCalculusFormula initialFormula, ArrayList<String> openFormulas, MuCalculusFormula.MuCalculusFormulaType type) {
         ArrayList<MuCalculusFormula> formulas = findNestedFixPoints(initialFormula, new ArrayList<>());
 
         List<String> keys = new ArrayList<>(variableArrayMap.keySet());
 
         for (MuCalculusFormula formula : formulas) {
-            if (formula.type == MuCalculusFormula.MuCalculusFormulaType.MU) {
+            if (formula.type == type) {
                 Integer index = keys.indexOf(formula.variableName);
 
                 ArrayList<String> freeVars = findFreeVariables(formula, index, new ArrayList<>());
@@ -79,8 +79,12 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
 
     @Override
     public ArrayList<String> eval(MuCalculusFormula f, LabelledTransitionSystem M) {
+        variableArrayMap = new LinkedHashMap<>();
         init(f, M);
-        return eval(f, variableArrayMap, M, null);
+        counter = 0;
+        ArrayList<String> val = eval(f, variableArrayMap, M, null);
+        System.out.println("Emerson Lee iteration: " + counter);
+        return val;
     }
 
     public ArrayList<String> eval(MuCalculusFormula f, Map<String, ArrayList<String>> A,
@@ -210,14 +214,15 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
 
                 return boxList;
             case MU:
-                ArrayList<String> Ai = variableArrayMap.get(f.variableName);
                 // A[i] := \emptyset
                 if (binder == MuCalculusFormula.MuCalculusFormulaType.NU) {
-                    resetOpenSubFormulas(f, new ArrayList<>());
+                    resetOpenSubFormulas(f, new ArrayList<>(), MuCalculusFormula.MuCalculusFormulaType.MU);
                 }
+                ArrayList<String> Ai = variableArrayMap.get(f.variableName);
                 ArrayList<String> oldAi;
 
                 do {
+                    counter++;
                     // X' := A[i]
                     oldAi = new ArrayList<>(Ai);
 
@@ -236,6 +241,7 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
                 Ai.addAll(M.getStates());
 
                 do {
+                    counter++;
                     // X' := A[i]
                     oldAi = new ArrayList<>(Ai);
 
