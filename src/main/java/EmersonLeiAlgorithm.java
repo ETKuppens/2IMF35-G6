@@ -57,7 +57,8 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
         return freeVars;
     }
 
-    private ArrayList<String> resetOpenSubFormulas(MuCalculusFormula initialFormula, ArrayList<String> openFormulas, MuCalculusFormula.MuCalculusFormulaType type) {
+    private ArrayList<String> resetOpenSubFormulas(MuCalculusFormula initialFormula, ArrayList<String> openFormulas,
+                                                   MuCalculusFormula.MuCalculusFormulaType type, LabelledTransitionSystem lts) {
         ArrayList<MuCalculusFormula> formulas = findNestedFixPoints(initialFormula, new ArrayList<>());
 
         List<String> keys = new ArrayList<>(variableArrayMap.keySet());
@@ -68,8 +69,10 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
 
                 ArrayList<String> freeVars = findFreeVariables(formula, index, new ArrayList<>());
 
-                if (!freeVars.isEmpty()) {
+                if (!freeVars.isEmpty() && type == MuCalculusFormula.MuCalculusFormulaType.MU) {
                     variableArrayMap.put(formula.variableName, new ArrayList<>());
+                } else if (!freeVars.isEmpty() && type == MuCalculusFormula.MuCalculusFormulaType.NU) {
+                    variableArrayMap.put(formula.variableName, lts.getStates());
                 }
             }
         }
@@ -216,7 +219,7 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
             case MU:
                 // A[i] := \emptyset
                 if (binder == MuCalculusFormula.MuCalculusFormulaType.NU) {
-                    resetOpenSubFormulas(f, new ArrayList<>(), MuCalculusFormula.MuCalculusFormulaType.MU);
+                    resetOpenSubFormulas(f, new ArrayList<>(), MuCalculusFormula.MuCalculusFormulaType.MU, M);
                 }
                 ArrayList<String> Ai = variableArrayMap.get(f.variableName);
                 ArrayList<String> oldAi;
@@ -234,11 +237,11 @@ public class EmersonLeiAlgorithm implements ModelCheckingAlgorithm {
 
                 return Ai;
             case NU:
+                if (binder == MuCalculusFormula.MuCalculusFormulaType.MU) {
+                    resetOpenSubFormulas(f, new ArrayList<>(), MuCalculusFormula.MuCalculusFormulaType.NU, M);
+                }
                 Ai = variableArrayMap.get(f.variableName);
-
                 // A[i] := S
-                Ai.clear();
-                Ai.addAll(M.getStates());
 
                 do {
                     counter++;
