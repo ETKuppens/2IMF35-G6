@@ -84,6 +84,8 @@ class Reader {
     }
 
     System.out.println("The formula is satisfied in the starting state : " + satisfiesFirst);
+    System.out.println("Accepting states : ");
+    System.out.println(eval);
   }
 }
 
