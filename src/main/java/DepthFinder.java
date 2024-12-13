@@ -1,21 +1,6 @@
 import java.util.ArrayList;
 
 public class DepthFinder {
-    static ArrayList<MuCalculusFormula> findNestedFixPoints(MuCalculusFormula formula, ArrayList<MuCalculusFormula> formulas) {
-        if (formula.f != null) {
-            formulas = findNestedFixPoints(formula.f, formulas);
-        }
-        if (formula.g != null) {
-            formulas = findNestedFixPoints(formula.g, formulas);
-        }
-
-        if (formula.type == MuCalculusFormula.MuCalculusFormulaType.NU
-                || formula.type == MuCalculusFormula.MuCalculusFormulaType.MU) {
-            formulas.add(formula);
-        }
-
-        return formulas;
-    }
     static Integer findNestingDepth(MuCalculusFormula formula) {
         switch (formula.type) {
             case BOX:
@@ -32,31 +17,45 @@ public class DepthFinder {
     }
 
     static Integer findAlternationDepth(MuCalculusFormula formula) {
-        return recurseAlternation(formula, null) + 1;
+        return recurseAlternation(formula).getDepth();
     }
     
-    static Integer recurseAlternation(MuCalculusFormula formula, MuCalculusFormula.MuCalculusFormulaType binder) {
+    static Child recurseAlternation(MuCalculusFormula formula) {
         switch (formula.type) {
             case BOX:
             case DIAMOND:
-                return recurseAlternation(formula.f, binder);
+                return recurseAlternation(formula.f);
             case CONJUNCTION:
             case DISJUNCTION:
-                return Math.max(recurseAlternation(formula.f, binder), recurseAlternation(formula.g, binder));
-            case MU:
-                if (binder == MuCalculusFormula.MuCalculusFormulaType.NU) {
-                    return Math.max(1, 1 + recurseAlternation(formula.f, MuCalculusFormula.MuCalculusFormulaType.MU));
+                Child eval1 = recurseAlternation(formula.f);
+                Child eval2 = recurseAlternation(formula.g);
+                Child dominantChild;
+
+                if (eval1.getDepth() >= eval2.getDepth()) {
+                    dominantChild = eval1;
                 } else {
-                    return Math.max(1, recurseAlternation(formula.f, MuCalculusFormula.MuCalculusFormulaType.MU));
+                    dominantChild = eval2;
+                }
+
+                return dominantChild;
+            case MU:
+                Child lowerChild = recurseAlternation(formula.f);
+                if (lowerChild.getLatestFixpoint() != null
+                        && lowerChild.getLatestFixpoint().type == MuCalculusFormula.MuCalculusFormulaType.NU) {
+                    return new Child(formula, Math.max(1, 1 + Math.max(recurseAlternation(formula.f).getDepth(), lowerChild.getDepth())));
+                } else {
+                    return new Child(formula, 1);
                 }
             case NU:
-                if (binder == MuCalculusFormula.MuCalculusFormulaType.MU) {
-                    return Math.max(1, 1 + recurseAlternation(formula.f, MuCalculusFormula.MuCalculusFormulaType.NU));
+                lowerChild = recurseAlternation(formula.f);
+                if (lowerChild.getLatestFixpoint() != null
+                        && lowerChild.getLatestFixpoint().type == MuCalculusFormula.MuCalculusFormulaType.MU) {
+                    return new Child(formula, Math.max(1, 1 + Math.max(recurseAlternation(formula.f).getDepth(), lowerChild.getDepth())));
                 } else {
-                    return Math.max(1, recurseAlternation(formula.f, MuCalculusFormula.MuCalculusFormulaType.NU));
+                    return new Child(formula, 1);
                 }
         }
-        return 0;
+        return new Child(null, 0);
     }
 
     static Integer findDAD(MuCalculusFormula formula) {
