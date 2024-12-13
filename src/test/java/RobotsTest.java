@@ -34,8 +34,12 @@ public class RobotsTest {
      * such that player II wins.
      */
     @Test
-    public void playerIIPlayWin() throws FileNotFoundException {
-        MuCalculusFormula f = new MuCalculusFormula("muX([choose1]<choose2>X||<won>true)");
+    public void playerIIPlayWinPossible() throws FileNotFoundException {
+        MuCalculusFormula f = new MuCalculusFormula("muX(<choose1><choose2>X||<won>true)");
+
+        System.out.println(f.toString() + " nesting depth: "  + DepthFinder.findNestingDepth(f));
+        System.out.println(f.toString() + " alternation depth: "  + DepthFinder.findAlternationDepth(f));
+        System.out.println(f.toString() + " dependent alternation depth: "  + DepthFinder.findDAD(f));
 
         for (int i = 0; i < gameList.size(); i++) {
             String gameName = gameList.get(i);
@@ -50,14 +54,48 @@ public class RobotsTest {
             gameFile.close();
 
             LabelledTransitionSystem game = new LabelledTransitionSystem(LTS);
-            //ArrayList<String> evalNaive = naive.eval(f, game);
+            ArrayList<String> evalNaive = naive.eval(f, game);
             ArrayList<String> evalEmersonLei = emersonLei.eval(f, game);
-
-            System.out.println("Here :D");
 
             // Check the output;
             // we are looking for that position (0,0) - so state 0 - holds!
-            boolean naiveHolds = false; // evalNaive.contains(game.getStartNode().toString());
+            boolean naiveHolds = evalNaive.contains(game.getStartNode().toString());
+            boolean emersonLeiHolds = evalEmersonLei.contains(game.getStartNode().toString());
+
+            System.out.println("Game " + gameName + ": naive: " + naiveHolds + ", lei: " + emersonLeiHolds);
+        }
+    }
+
+    /**
+     * Check if player II has a strategy to win when strating in (0,0).
+     */
+    @Test
+    public void playerIIPlayWinAlways() throws FileNotFoundException {
+        MuCalculusFormula f = new MuCalculusFormula("muX([choose1]<choose2>X||<won>true)");
+
+        System.out.println(f.toString() + " nesting depth: "  + DepthFinder.findNestingDepth(f));
+        System.out.println(f.toString() + " alternation depth: "  + DepthFinder.findAlternationDepth(f));
+        System.out.println(f.toString() + " dependent alternation depth: "  + DepthFinder.findDAD(f));
+
+        for (int i = 0; i < gameList.size(); i++) {
+            String gameName = gameList.get(i);
+            
+            Scanner gameFile = new Scanner(new File(getClass().getClassLoader().getResource(gameName).getFile()));
+            ArrayList<String> LTS = new ArrayList<>();
+
+            while (gameFile.hasNext()) {
+                LTS.add(gameFile.nextLine());
+            }
+
+            gameFile.close();
+
+            LabelledTransitionSystem game = new LabelledTransitionSystem(LTS);
+            ArrayList<String> evalNaive = naive.eval(f, game);
+            ArrayList<String> evalEmersonLei = emersonLei.eval(f, game);
+
+            // Check the output;
+            // we are looking for that position (0,0) - so state 0 - holds!
+            boolean naiveHolds = evalNaive.contains(game.getStartNode().toString());
             boolean emersonLeiHolds = evalEmersonLei.contains(game.getStartNode().toString());
 
             System.out.println("Game " + gameName + ": naive: " + naiveHolds + ", lei: " + emersonLeiHolds);
