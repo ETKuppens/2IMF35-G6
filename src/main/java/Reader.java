@@ -41,11 +41,15 @@ class Reader {
       System.err.println("Error reading file: " + e.getMessage());
     }
 
+    StringBuilder finalLine = new StringBuilder();
+
     for (String line : lines) {
       if (!line.contains("%") && !line.equals("")) {
-        muCalculusFormula = new MuCalculusFormula(MuCalculusInputCleaner.cleanInput(line));
+        finalLine.append(line);
       }
     }
+
+    muCalculusFormula = new MuCalculusFormula(MuCalculusInputCleaner.cleanInput(finalLine.toString()));
 
     LabelledTransitionSystem labelledTransitionSystem = new LabelledTransitionSystem(LTSlist);
     
@@ -53,7 +57,9 @@ class Reader {
 
     Integer nestingDepth = DepthFinder.findNestingDepth(muCalculusFormula);
     Integer alternationDepth = DepthFinder.findAlternationDepth(muCalculusFormula);
+    boolean satisfiesFirst = false;
 
+    System.out.println("Mucalculus = " + muCalculusFormula);
     System.out.println("Nesting depth = " + nestingDepth.toString());
     System.out.println("Alternation depth = " + alternationDepth.toString());
 
@@ -62,17 +68,20 @@ class Reader {
       NaiveAlgorithm naiveAlgorithm = new NaiveAlgorithm();
       
       eval = naiveAlgorithm.eval(muCalculusFormula, labelledTransitionSystem);
-
     } else if (argumentsCommand[2].equals("EL")) {
       System.out.println("Using Emerson Lei algorithm");
       EmersonLeiAlgorithm emersonLeiAlgorithm = new EmersonLeiAlgorithm();
 
       eval = emersonLeiAlgorithm.eval(muCalculusFormula, labelledTransitionSystem);
-
-
     } else {
       System.out.println("Please select either 'naive' or 'EL' as setting");
     }
+
+    if (eval.contains(labelledTransitionSystem.getStartNode().toString())) {
+      satisfiesFirst = true;
+    }
+
+    System.out.println("The formula is satisfied in the starting state : " + satisfiesFirst);
   }
 }
 
