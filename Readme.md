@@ -1,6 +1,7 @@
 
 ## Running the project
 The repository is a Maven project running Java. Apache Maven must thus first be installed.
+The entry point is in Reader.java
 In order to run the project, use the following steps:
 
 ### From the command line
