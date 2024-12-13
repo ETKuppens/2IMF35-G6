@@ -18,6 +18,9 @@ public class Child {
         Depth = depth;
     }
 
+    public Child() {
+    }
+
     public Child(MuCalculusFormula latestFixpoint, int depth) {
         LatestFixpoint = latestFixpoint;
         Depth = depth;

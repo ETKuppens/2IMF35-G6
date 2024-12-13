@@ -57,11 +57,13 @@ class Reader {
 
     Integer nestingDepth = DepthFinder.findNestingDepth(muCalculusFormula);
     Integer alternationDepth = DepthFinder.findAlternationDepth(muCalculusFormula);
+    Integer DAD = DepthFinder.findDAD(muCalculusFormula);
     boolean satisfiesFirst = false;
 
     System.out.println("Mucalculus = " + muCalculusFormula);
-    System.out.println("Nesting depth = " + nestingDepth.toString());
-    System.out.println("Alternation depth = " + alternationDepth.toString());
+    System.out.println("Nesting depth = " + nestingDepth);
+    System.out.println("Alternation depth = " + alternationDepth);
+    System.out.println("Dependent Alternation Depth = " + DAD);
 
     if (argumentsCommand[2].equals("naive")) {
       System.out.println("Using naive algorithm");
